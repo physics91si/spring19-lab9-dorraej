@@ -10,20 +10,27 @@ import matplotlib.animation as animation
 # Modules you will need
 import numpy as np
 import particle
+from molecule import *
 
 # TODO: Implement this function
 def init_molecule():
     """Create Particles p1 and p2 inside boundaries and return a molecule
     connecting them"""
-
-    pass
+    mol = molecule(np.array([0.2, 0.2]), np.array([0.8, 0.8]), 1, 2, 1, 0.5)
+    return mol
 
 
 # TODO: Implement this function
 def time_step(dt, mol):
     """Sets new positions and velocities of the particles attached to mol"""
+    mol.pos1.vel = mol.pos1.vel -(mol.get_force() / mol.pos1.m)*dt
+    mol.pos2.vel = mol.pos2.vel + (mol.get_force() / mol.pos2.m)*dt
+    mol.pos1.pos = mol.pos1.pos + mol.pos1.vel*dt
+    mol.pos2.pos = mol.pos2.pos + mol.pos2.vel*dt
+
     
-    pass
+    
+    
 
 
 #############################################
@@ -36,7 +43,7 @@ def run_dynamics(n, dt, xlim=(0, 1), ylim=(0, 1)):
 
     # Animation stuff
     fig, ax = plt.subplots()
-    line, = ax.plot((mol.p1.pos[0], mol.p2.pos[0]), (mol.p1.pos[1], mol.p2.pos[1]), '-o')
+    line, = ax.plot((mol.pos1.pos[0], mol.pos2.pos[0]), (mol.pos1.pos[1], mol.pos2.pos[1]), '-o')
     plt.xlim(xlim)
     plt.ylim(ylim)
     plt.xlabel(r'$x$')
@@ -49,8 +56,8 @@ def run_dynamics(n, dt, xlim=(0, 1), ylim=(0, 1)):
 def update_anim(i,dt, mol,line):
     """Update and draw the molecule. Called by FuncAnimation"""
     time_step(dt, mol)
-    line.set_data([(mol.p1.pos[0], mol.p2.pos[0]),
-                   (mol.p1.pos[1], mol.p2.pos[1])])
+    line.set_data([(mol.pos1.pos[0], mol.pos2.pos[0]),
+                   (mol.pos1.pos[1], mol.pos2.pos[1])])
     return line,
 
 if __name__ == '__main__':
